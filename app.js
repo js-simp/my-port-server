@@ -1,37 +1,32 @@
-const {default : usePaxful} = require('@paxful/sdk-js')
 const express = require('express');
-const data = require('./user_info.js')
+const app = require('./server.js')
+const dotenv = require('dotenv')
+const mongoose = require('mongoose')
 
-app = express();
+dotenv.config();
 
-app.get('/', (req,res) => {
-    console.log("hello world")
-    res.json(data)
+const PORT = process.env.PORT || 5000;
+const URI = process.env.MY_PORT_DB_URI
+
+//connect to mongoose database
+mongoose.connect(URI, {
+    useNewUrlParser: true, 
+    useUnifiedTopology: true
+})
+.catch(err => {
+    console.error(err.stack);
+    process.exit(1);
+})
+.then(async client => {
+    app.listen(PORT, () => {
+        console.log("Listening on port 5000...")
+    })
 })
 
-app.listen(5000, () => {
-    console.log("Listening to server on port 5000...")
+app.post('/register', (req,res) => {
+    console.log(req.header)
 })
 
-//direct access works
-//for delegat access what are the steps?
-
-
-async function load() {
-    const paxfulApi = usePaxful({
-        clientId: 'jJGQRHfvSO2cHFNPSSB4TXHcxmupBcyYmJ41kUVJifwCQEsf',
-        clientSecret: 'X61Wndq94jaWeegUQ6fBBCTtX32YuQuqSNrHru0DIsSpKXmE',
-    });
-
-
-    const myTransactions = await paxfulApi.invoke("/paxful/v1/transactions/all", { type: 'trade' });
-
-    console.log(myTransactions);
-    const data = myTransactions.data.transactions;
-    data.forEach(element => {
-        console.log(element)
-    });
-} 
-
-
-
+app.post('/login', (req,res) => {
+    console.log(req.header)
+})
