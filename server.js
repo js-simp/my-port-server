@@ -5,14 +5,16 @@ const passport_local = require('passport-local');
 const dotenv = require('dotenv')
 const cors = require('cors');
 
+dotenv.config();
 
 const app = express()
+const origin = process.env.ORIGIN_SERVER_DEV
 
 
 //Middlware
 app.use(express.json());
 app.use(cors({
-    origin : 'http://localhost:3000',
+    origin : origin,
     credentials : true,
 }
 ));

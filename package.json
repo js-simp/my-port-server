@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@paxful/sdk-js": "^0.6.10",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
