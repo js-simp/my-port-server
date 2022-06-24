@@ -19,7 +19,7 @@ mongoose.connect(URI, {
 })
 .then(async client => {
     app.listen(PORT, () => {
-        console.log("Listening on port 5000...")
+        console.log(`Listening on port ... ${PORT}`)
     })
 })
 
