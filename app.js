@@ -31,7 +31,34 @@ client.connect()
 const db = client.db(DB);
 const col = db.collection('accounts')
 
-async function addUser(info) {
+async function addUser(info, res) {
+    
+    try {
+        
+        //check if username is already availble (already registered?)
+        const existing = await col.findOne({username : info.username})
+        if(existing) {
+            res.send("User already exists")
+        }
+        if(!existing){
+            //hash the sent password
+            const hashedPassword = bcrypt.hash(info.password, 10)
+            // Construct a new document                                                                                                                                                        
+            let newUser = {
+                "username": info.username,
+                "password" : hashedPassword,
+            }
+            // Insert a single document, wait for promise so we can read it back
+            const p = await col.insertOne(newUser);
+            res.send("Successfully added new user")
+        }
+    } 
+    catch (err) {
+        console.log(err.stack);
+    }
+}
+
+async function getUser(info, res) {
     
     try {
         // Construct a document                                                                                                                                                              
@@ -39,9 +66,16 @@ async function addUser(info) {
             "username": info.username,
             "password" : info.password,
         }
-        // Insert a single document, wait for promise so we can read it back
-        const p = await col.insertOne(newUser);
-        // Find one document
+        //check if username is already availble (already registered?)
+        const existing = await col.findOne({username : info.username})
+        if(existing) {
+            res.send("User already exists")
+        }
+        if(!existing){
+            // Insert a single document, wait for promise so we can read it back
+            const p = await col.insertOne(newUser);
+            res.send("Successfully added new user")
+        }
     } 
     catch (err) {
         console.log(err.stack);
@@ -51,9 +85,10 @@ async function addUser(info) {
 
 app.post('/register', (req,res) => {
     console.log(req.body)
-    addUser(req.body);
+    addUser(req.body, res);
 })
 
 app.post('/login', (req,res) => {
     console.log(req.body)
+    getUser(req.body, res);
 })
