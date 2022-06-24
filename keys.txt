@@ -1,8 +1,0 @@
-direct access
-clientID : 'jJGQRHfvSO2cHFNPSSB4TXHcxmupBcyYmJ41kUVJifwCQEsf'
-secret : 'X61Wndq94jaWeegUQ6fBBCTtX32YuQuqSNrHru0DIsSpKXmE'
-
-
-delegate access
-clientID : 'yQqOU1ttpAvTylta0NZyXMTrS9JgxCBDjqyDan0cwheOgxa0'
-secret : 'WViaVWDnM5dEgeXS3RL7pFhcl0xnyUh0oIiV0ZWzJlcqxwqr'
