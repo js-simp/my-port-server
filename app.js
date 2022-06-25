@@ -60,9 +60,9 @@ app.post('/register', (req,res) => {
 app.post('/login', (req,res,next) => {
     passport.authenticate('local', (err, user, info)=> {
         if(err) {throw err};
-        if(!user) {res.send('User does not exist')}
+        if(!user) {res.send(info)}
         else{
-            res.send('Successfully authenticated!')
+            res.send(info)
             
         }
     })(req,res,next);
