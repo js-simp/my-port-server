@@ -1,12 +1,15 @@
 const {default : usePaxful} = require('@paxful/sdk-js')
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 //direct access works
 //for delegat access what are the steps?
 
 async function load() {
     const paxfulApi = usePaxful({
-        clientId: 'jJGQRHfvSO2cHFNPSSB4TXHcxmupBcyYmJ41kUVJifwCQEsf',
-        clientSecret: 'X61Wndq94jaWeegUQ6fBBCTtX32YuQuqSNrHru0DIsSpKXmE',
+        clientId: process.env.local.CLIENT_ID, //ADD CREDENTIALS FROM PAXFUL INTO .env.local
+        clientSecret: process.env.local.CLIENT_SECRET,
     });
 
 
