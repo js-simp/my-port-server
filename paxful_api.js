@@ -10,6 +10,7 @@ async function load() {
     const paxfulApi = usePaxful({
         clientId: process.env.local.CLIENT_ID, //ADD CREDENTIALS FROM PAXFUL INTO .env.local
         clientSecret: process.env.local.CLIENT_SECRET,
+        redirectUri: process.env.local.LOCAL_URI
     });
 
 

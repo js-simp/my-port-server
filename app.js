@@ -67,3 +67,8 @@ app.post('/login', (req,res,next) => {
         }
     })(req,res,next);
 })
+
+//handling paxful account delegate access for user
+app.post('/?user/paxful', (req,res,next) => {
+    
+})
