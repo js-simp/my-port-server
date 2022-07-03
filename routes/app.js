@@ -84,8 +84,7 @@ router.post('/login',(req, res, next) => {
 //handling paxful account delegate access for user
 router.get('/:user/paxful', (req,res,next) => {
     console.log('get paxful info!')
-    console.log(req.user)
-    console.log(req.session)
+    console.log(req.isAuthenticated())
 })
 
 
