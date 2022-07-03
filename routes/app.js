@@ -18,7 +18,9 @@ const col = db.collection('accounts') //access accounts collection
 //middleware for passport
 router.use(passport.initialize())
 router.use(passport.session())
-require('../passportConfig')(passport)
+require('../configs/passportConfig')(passport)
+
+
 
 //-----------Registration of new user function ------------------
 async function addUser(info, res) {
@@ -55,27 +57,35 @@ router.post('/register', (req,res) => {
     addUser(req.body, res);
 })
 
-router.post('/login', (req,res,next) => {
-    console.log(req.session)
-    passport.authenticate('local', (err, user, info)=> {
-        if(err) {throw err};
-        if(!user) {res.send(info)}
-        else{
-            res.send(info)
-            
+router.post('/login',(req, res, next) => { 
+    passport.authenticate('local',
+        (err, user, info) => {
+        if (err) {
+            return next(err);
         }
-    })(req,res,next);
+
+        if (!user) {
+            res.send(info)
+        }
+
+        req.logIn(user, function(err) {
+            if (err) {
+            return next(err);
+            }
+
+            res.send(info)
+        });
+
+        })(req, res, next);
 })
+
+
 
 //handling paxful account delegate access for user
 router.get('/:user/paxful', (req,res,next) => {
-    if(req.session.viewCount){
-        req.session.viewCount = req.session.viewCount + 1;
-    }
-    else{
-        req.session.viewCount = 1;
-    }
-    res.send(`${req.session.viewCount}`);
+    console.log('get paxful info!')
+    console.log(req.user)
+    console.log(req.session)
 })
 
 

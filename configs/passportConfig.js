@@ -1,13 +1,13 @@
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcrypt');
-const client = require('./db');
+const client = require('../db');
 
 //allocate environment variables
 const DB = process.env.MY_PORT_DB_NS;
 
 const db = client.db(DB); //access database
 const col = db.collection('accounts') //access accounts collection
-
+const sess = db.collection('sessions')
 module.exports = function(passport){
   passport.use(
     new LocalStrategy(function verify(username, password, cb) {
@@ -24,17 +24,22 @@ module.exports = function(passport){
           return cb(null, user, { message: 'Successfully authenticated!', success : true });
         });
       });
-      passport.serializeUser(function(user, cb) {
+      passport.serializeUser(function(user, done) {
         process.nextTick(function() {
-          cb(null, { id: user.id, username: user.username });
+          done(null, { id: user._id, username: user.username });
         });
-      });
-      
+      }) 
+    
       passport.deserializeUser(function(user, cb) {
-        process.nextTick(function() {
-          return cb(null, user);
-        });
-      });
-    })
-  )
+        console.log(user)
+        col.findById(user.id)
+        .then((user)=> {
+          cb(null, user);
+      })
+        .catch((err) => {
+          cb(err)
+        })
+      }); 
+    }))
+  
 }
