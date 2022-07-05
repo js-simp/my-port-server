@@ -3,6 +3,7 @@ const client = require('../db')
 const bcrypt = require('bcrypt')
 const router = require('express').Router()
 const passport = require('passport')
+const pax_auth = require('./paxful_auth')
 
 dotenv.config();
 
@@ -82,10 +83,7 @@ router.post('/login',(req, res, next) => {
 
 
 //handling paxful account delegate access for user
-router.get('/:user/paxful', (req,res,next) => {
-    console.log('get paxful info!')
-    console.log(req.isAuthenticated())
-})
+router.use('/:user/paxful', pax_auth)
 
 
 module.exports = router;

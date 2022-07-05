@@ -1,24 +1,46 @@
-const {default : usePaxful} = require('@paxful/sdk-js')
-const dotenv = require('dotenv');
+const client = require('./db');
+const { default: usePaxful } = require("@paxful/sdk-js");
 
-dotenv.config();
-
-//direct access works
-//for delegat access what are the steps?
-
-async function load() {
-    const paxfulApi = usePaxful({
-        clientId: process.env.local.CLIENT_ID, //ADD CREDENTIALS FROM PAXFUL INTO .env.local
-        clientSecret: process.env.local.CLIENT_SECRET,
-        redirectUri: process.env.local.LOCAL_URI
-    });
+//allocate environment variables
+const DB = process.env.MY_PORT_DB_NS;
 
 
-    const myTransactions = await paxfulApi.invoke("/paxful/v1/transactions/all", { type: 'trade' });
+//access mongodb cluster database
+const db = client.db(DB); //access database
+const col = db.collection('paxful') //access accounts collection
 
-    console.log(myTransactions);
-    const data = myTransactions.data.transactions;
-    data.forEach(element => {
-        console.log(element)
-    });
-} 
+// In real word application you should consider using a database to store
+// credentials
+class JsonCredentialsStorage {
+    constructor(userId) {
+        this.user = userId;
+    }
+
+    async saveCredentials(credentials) {
+        let paxUser = {
+            "userId" : this.user,
+            "credentials" : credentials
+
+        }
+        const p = await col.insertOne(paxUser);
+    }
+
+    async getCredentials() {
+        const existing = await col.findOne({"userId" : this.user})
+        console.log(existing)
+        return existing ? existing.credentials : null;
+    }
+};
+
+module.exports.invokeOrDie = async (paxfulSdk, endpoint, params = {}) => {
+    const response = await paxfulSdk.invoke(endpoint, params);
+    if (response['error']) {
+        return Promise.reject(`Error occurred when invoking '${endpoint}'. ${response.error}: ${response.error_description}`);
+    }
+
+    return Promise.resolve(response);
+}
+
+module.exports.createPaxfulApi = (config, userId) => {
+    return usePaxful(config, new JsonCredentialsStorage(userId));
+};

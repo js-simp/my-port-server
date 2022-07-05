@@ -4,8 +4,8 @@ dotenv.config();
 module.exports.getConfig = () => {
     const config = {
         clientId: process.env.PAXFUL_CLIENT_ID,
-        clientSecret: process.env.PAXFUL_API_SECRET,
-        serverPort: process.env.SERVER_PORT || 3000
+        clientSecret: process.env.PAXFUL_CLIENT_SECRET,
+        serverPort: process.env.PORT || 5000
     }
 
     if (!config.clientId || !config.clientSecret) {

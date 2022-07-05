@@ -31,9 +31,9 @@ module.exports = function(passport){
       }) 
     
       passport.deserializeUser(function(user, cb) {
+        console.log('deserializing user...')
         col.findOne({username : user.username})
-        .then((user)=> {
-          console.log(user)
+        .then((item)=> {
           cb(null, user);
       })
         .catch((err) => {
