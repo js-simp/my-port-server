@@ -1,16 +1,13 @@
 const express = require('express');
-const router = express.Router();
-const { invokeOrDie } = require('../paxful_api');
+// const router = express.Router();
+const { invokeOrDie } = require('./paxful_api');
 
-router.get('/', async (req, res) => {
+module.exports.getParams = async (paxfulSdk) => {
+    // console.log('trying to get it right!' , req.session) //testing
+    // console.log(req.context.services)
     const params = {
-        isAuthenticated: req.session.isAuthenticated,
-        user: req.session.user,
         balance: null
     };
-
-    if (req.session.isAuthenticated) {
-        const paxfulSdk = req.context.services.createPaxfulApi();
 
         const balanceResponse = await invokeOrDie(paxfulSdk, '/paxful/v1/wallet/balance');
         params.balance = {
@@ -23,10 +20,9 @@ router.get('/', async (req, res) => {
         });
 
         params.transactions = transactionsResponse.data.transactions.filter((tx) => 'Escrow release' === tx.type);
-    }
 
-    console.log(params)
-    res.send(params);
-});
-
-module.exports = router;
+    // res.render('index', params);
+    // res.send(params)
+    // return params
+    return params
+};

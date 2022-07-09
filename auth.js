@@ -1,26 +1,18 @@
-const dotenv = require('dotenv')
-const client = require('../db')
+const express = require('express');
 const bcrypt = require('bcrypt')
-const router = require('express').Router()
+const client = require('./db')
+const dotenv = require('dotenv')
+const router = express.Router();
 const passport = require('passport')
-const pax_auth = require('./paxful_auth')
+const open = require('open')
 
-dotenv.config();
-
-
+dotenv.config()
 //allocate environment variables
 const DB = process.env.MY_PORT_DB_NS;
-
 
 //access mongodb cluster database
 const db = client.db(DB); //access database
 const col = db.collection('accounts') //access accounts collection
-
-//middleware for passport
-router.use(passport.initialize())
-router.use(passport.session())
-require('../configs/passportConfig')(passport)
-
 
 
 //-----------Registration of new user function ------------------
@@ -68,22 +60,21 @@ router.post('/login',(req, res, next) => {
         if (!user) {
             res.send(info)
         }
-
-        req.logIn(user, function(err) {
-            if (err) {
-            return next(err);
-            }
-
-            res.send(info)
-        });
+        else{
+            req.logIn(user, function(err) {
+                if (err) {
+                return next(err);
+                }
+    
+                res.send(info)
+            });
+        }
+        
 
         })(req, res, next);
 })
 
-
-
-//handling paxful account delegate access for user
-router.use('/:user/paxful', pax_auth)
+router.use('/:user/paxful', require('./paxful_app'))
 
 
 module.exports = router;

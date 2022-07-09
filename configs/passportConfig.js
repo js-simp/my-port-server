@@ -16,7 +16,7 @@ module.exports = function(passport){
         if (!user) { return cb(null, false, { message: 'Incorrect username or password.', success : false }); }
     
         bcrypt.compare(password, user.password, function(err, result) {
-            console.log(result);
+            // console.log(result);
           if (err) { return cb(err); }
           if (result !== true) {
             return cb(null, false, { message: 'Incorrect username or password.', success : false });
@@ -24,22 +24,22 @@ module.exports = function(passport){
           return cb(null, user, { message: 'Successfully authenticated!', success : true });
         });
       });
-      passport.serializeUser(function(user, done) {
-        process.nextTick(function() {
-          done(null, { id: user._id, username: user.username });
-        });
-      }) 
-    
-      passport.deserializeUser(function(user, cb) {
-        console.log('deserializing user...')
-        col.findOne({username : user.username})
-        .then((item)=> {
-          cb(null, user);
-      })
-        .catch((err) => {
-          cb(err)
-        })
-      }); 
     }))
+    passport.serializeUser(function(user, done) {
+      process.nextTick(function() {
+        done(null, { id: user._id, username: user.username });
+      });
+    }) 
+  
+    passport.deserializeUser(function(user, cb) {
+      console.log('deserializing user...')
+      col.findOne({username : user.username})
+      .then((item)=> {
+        cb(null, user);
+    })
+      .catch((err) => {
+        cb(err)
+      })
+    }); 
   
 }
