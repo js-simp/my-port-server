@@ -23,6 +23,13 @@ const getUser = (userId) => {
     })
 }
 
+const addUser = async (userId, paxUser) => {
+    //updating if credentials already exists
+    const p = await col.updateOne({'userId': userId}, {$set : paxUser}, {upsert : true} ) 
+    console.log(`We found ${p.matchedCount} document/s and modified ${p.modifiedCount} docs`)  
+    return p;
+}
+
 
 // In real word application you should consider using a database to store
 // credentials
@@ -39,7 +46,8 @@ class JsonCredentialsStorage {
             "credentials" : credentials
 
         }
-        const p = col.insertOne(paxUser);      
+        // const p = col.insertOne(paxUser);
+        const p = addUser(this.user, paxUser)    
     }
 
     getCredentials() {

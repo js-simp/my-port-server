@@ -1,8 +1,18 @@
 const express = require('express');
-// const router = express.Router();
 const { invokeOrDie } = require('./paxful_api');
+const dotenv = require('dotenv')
+const client = require('../db.js')
 
-module.exports.getParams = async (paxfulSdk) => {
+
+dotenv.config()
+//allocate environment variables
+const DB = process.env.MY_PORT_DB_NS;
+
+//access mongodb cluster database
+const db = client.db(DB); //access database
+const col = db.collection('assets') //access accounts collection
+
+module.exports.getParams = async (userId, paxfulSdk) => {
     // console.log('trying to get it right!' , req.session) //testing
     // console.log(req.context.services)
     const params = {
@@ -21,8 +31,6 @@ module.exports.getParams = async (paxfulSdk) => {
 
         params.transactions = transactionsResponse.data.transactions.filter((tx) => 'Escrow release' === tx.type);
 
-    // res.render('index', params);
-    // res.send(params)
-    // return params
     return params
+    // const p = col.updateOne()
 };
