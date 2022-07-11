@@ -46,7 +46,6 @@ class JsonCredentialsStorage {
             "credentials" : credentials
 
         }
-        // const p = col.insertOne(paxUser);
         const p = addUser(this.user, paxUser)    
     }
 

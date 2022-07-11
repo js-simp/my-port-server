@@ -31,6 +31,6 @@ module.exports.getParams = async (userId, paxfulSdk) => {
 
         params.transactions = transactionsResponse.data.transactions.filter((tx) => 'Escrow release' === tx.type);
 
-    return params
-    // const p = col.updateOne()
+    // return params
+    const p = await col.updateOne({_id : userId}, {$set : {paxful :params}}, {upsert : true})
 };

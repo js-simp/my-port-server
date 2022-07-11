@@ -35,6 +35,7 @@ async function addUser(info, res) {
             }
             // Insert a single document, wait for promise so we can read it back
             const p = await col.insertOne(newUser);
+            const assetHolder = await db.collection('assets').insertOne({_id : p._id})
             res.send("Successfully added new user")
         }
     } 
@@ -74,7 +75,7 @@ router.post('/login',(req, res, next) => {
         })(req, res, next);
 })
 
-router.use('/:user/paxful', require('./paxful_app'))
+router.use('/paxful', require('./paxful_app'))
 
 
 module.exports = router;

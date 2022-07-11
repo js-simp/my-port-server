@@ -36,7 +36,7 @@ router.use(function(req, res, next) {
                 // instance is associated with credentials specific for currently authenticated user
                 return createPaxfulApi({
                     ...config,
-                    redirectUri: `http://localhost:${config.serverPort}/${req.user.username}/paxful/auth/callback`,
+                    redirectUri: `http://localhost:${config.serverPort}/paxful/auth/callback`,
                     scope: ['profile', 'email', 'paxful:wallet:balance', 'paxful:transactions:all']
                 }, req.session.userId);
             }
