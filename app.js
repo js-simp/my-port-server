@@ -1,69 +1,56 @@
-const app = require('./server.js')
+const express = require('express');
+const session = require('express-session')
 const dotenv = require('dotenv')
+const cors = require('cors');
 const client = require('./db')
-const bcrypt = require('bcrypt')
-const passport = require('passport')
+const MongoStore = require('connect-mongo')
 
+const passport = require('passport')
 
 dotenv.config();
 
-
+const app = express()
+const origin = process.env.ORIGIN_SERVER_DEV
+const PORT = process.env.PORT || 5000;
 //allocate environment variables
 const DB = process.env.MY_PORT_DB_NS;
-
-//middleware for passport
-app.use(passport.initialize())
-app.use(passport.session())
-require('./passportConfig')(passport)
-
 
 //access mongodb cluster database
 const db = client.db(DB); //access database
 const col = db.collection('accounts') //access accounts collection
 
 
-//-----------Registration of new user function ------------------
-async function addUser(info, res) {
-    
-    try {
-        
-        //check if username is already availble (already registered?)
-        const existing = await col.findOne({username : info.username})
-        if(existing) {
-            res.send("User already exists")
-        }
-        if(!existing){
-            //hash the sent password
-            const hashedPassword = await bcrypt.hash(info.password, 10)
-            // Construct a new document                                                                                                                                                        
-            let newUser = {
-                "username": info.username,
-                "password" : hashedPassword,
-            }
-            // Insert a single document, wait for promise so we can read it back
-            const p = await col.insertOne(newUser);
-            res.send("Successfully added new user")
-        }
-    } 
-    catch (err) {
-        console.log(err.stack);
-    }
+
+//Middlware
+app.use(express.json());
+app.use(cors({
+    origin : origin,
+    credentials : true,
 }
+));
+app.use(session(
+    {
+        secret: 'secretcode',
+        resave: true,
+        saveUninitialized: true,
+        store : MongoStore.create({
+            client : client,
+            dbName: DB
+        })
+    }
+))
 
-//HANDLING REGISTER AND LOGIN REQUESTS FROM CLIENT
+//middleware for passport
+app.use(passport.initialize())
+app.use(passport.session())
+require('./configs/passportConfig')(passport)
 
-app.post('/register', (req,res) => {
-    console.log(req.body)
-    addUser(req.body, res);
-})
+app.use('/', require('./auth'))
+//-------------------END OF MIDDLEWARE---------------------------
 
-app.post('/login', (req,res,next) => {
-    passport.authenticate('local', (err, user, info)=> {
-        if(err) {throw err};
-        if(!user) {res.send(info)}
-        else{
-            res.send(info)
-            
-        }
-    })(req,res,next);
+
+
+//start listening on port
+app.listen(PORT, () => {
+    console.log(`Listening on port ... ${PORT}`)
 })
