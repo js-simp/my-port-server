@@ -76,6 +76,7 @@ router.post('/login',(req, res, next) => {
 })
 
 router.use('/paxful', require('./paxful_app'))
+router.use('/ethplorer', require('./cryptowallets'))
 
 
 module.exports = router;
