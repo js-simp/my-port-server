@@ -35,7 +35,13 @@ async function addUser(info, res) {
             }
             // Insert a single document, wait for promise so we can read it back
             const p = await col.insertOne(newUser);
-            const assetHolder = await db.collection('assets').insertOne({_id : p._id})
+            const assetHolder = await db.collection('assets').insertOne({user : info.username, 
+                cryptoAddresses : [],
+                realEstate : [],
+                securities : [],
+                bullion : [],
+                stock : []
+            })
             res.send("Successfully added new user")
         }
     } 
