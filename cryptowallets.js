@@ -31,8 +31,14 @@ router.use('/newAddress', (req,res) => {
   // console.log(req.body)
   const address = req.body.address;
   //check if address is valid
-  
+
   //add new address to asset collection -> crypto array
+  col.updateOne(
+    { user: user },
+    { $push: { cryptoAddresses: address } }
+ )
+
+ res.send('New Crypto Address has been added succesfully!')
 })
 
 router.use('/', (req,res) => {
